@@ -1,0 +1,124 @@
+version: 2
+project_name: yaml-docs
+before:
+  hooks:
+    - go mod download
+    - go test ./...
+builds:
+  - main: ./cmd/yaml-docs
+    env:
+      - CGO_ENABLED=0
+    goarch:
+      - amd64
+      - arm
+      - arm64
+    goarm:
+      - 6
+      - 7
+    goos:
+      - darwin
+      - linux
+      - windows
+archives:
+  - id: default
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- .Version }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else if eq .Arch "arm" }}{{ .Arch }}{{ .Arm }}
+      {{- else }}{{ .Arch }}{{ end }}
+
+checksum:
+  name_template: checksums.txt
+snapshot:
+  version_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+
+signs:
+- artifacts: checksum
+  args: [ '{{ if index .Env "GPG_FINGERPRINT"  }}-u {{ .Env.GPG_FINGERPRINT }}{{ else }}-s{{ end }}', "--output", "${signature}","--detach-sign", "${artifact}"]
+
+nfpms:
+- vendor: yaml-docs
+  homepage: https://github.com/blakyaks/yaml-docs
+  maintainer: blakyaks
+  description: A tool for automatically generating markdown documentation for YAML configuration files
+  license: GPL-3.0-or-later
+  formats:
+  - deb
+  - rpm
+  file_name_template: >-
+    {{ .ProjectName }}_
+    {{- .Version}}_
+    {{- title .Os }}_
+    {{- if eq .Arch "amd64" }}x86_64
+    {{- else if eq .Arch "386" }}i386
+    {{- else if eq .Arch "arm" }}{{ .Arch }}{{ .Arm }}
+    {{- else }}{{ .Arch }}{{ end }}
+
+brews:
+  - repository:
+      owner: blakyaks
+      name: homebrew
+    directory: Formula
+    homepage: https://github.com/blakyaks/yaml-docs
+    description: Automatically generate markdown documentation for YAML configuration files
+    install: |
+      bin.install "yaml-docs"
+    test: |
+      system "#{bin}/yaml-docs --version"
+dockers:
+  - goos: linux
+    goarch: amd64
+    dockerfile: Dockerfile
+    use: buildx
+    build_flag_templates:
+      - --platform=linux/amd64
+    image_templates:
+      - blakyaks/{{ .ProjectName }}:{{ .Tag }}-amd64
+  - goos: linux
+    goarch: arm64
+    dockerfile: Dockerfile
+    use: buildx
+    build_flag_templates:
+      - --platform=linux/arm64
+    image_templates:
+      - blakyaks/{{ .ProjectName }}:{{ .Tag }}-arm64
+  - goos: linux
+    goarch: arm
+    goarm: 6
+    dockerfile: Dockerfile
+    use: buildx
+    build_flag_templates:
+      - --platform=linux/arm/v6
+    image_templates:
+      - blakyaks/{{ .ProjectName }}:{{ .Tag }}-arm64v6
+  - goos: linux
+    goarch: arm
+    goarm: 7
+    dockerfile: Dockerfile
+    use: buildx
+    build_flag_templates:
+      - --platform=linux/arm/v7
+    image_templates:
+      - blakyaks/{{ .ProjectName }}:{{ .Tag }}-arm64v7
+docker_manifests:
+- name_template: blakyaks/{{ .ProjectName }}:{{ .Tag }}
+  image_templates:
+    - blakyaks/{{ .ProjectName }}:{{ .Tag }}-amd64
+    - blakyaks/{{ .ProjectName }}:{{ .Tag }}-arm64
+    - blakyaks/{{ .ProjectName }}:{{ .Tag }}-arm64v6
+    - blakyaks/{{ .ProjectName }}:{{ .Tag }}-arm64v7
+- name_template: blakyaks/{{ .ProjectName }}:latest
+  image_templates:
+    - blakyaks/{{ .ProjectName }}:{{ .Tag }}-amd64
+    - blakyaks/{{ .ProjectName }}:{{ .Tag }}-arm64
+    - blakyaks/{{ .ProjectName }}:{{ .Tag }}-arm64v6
+    - blakyaks/{{ .ProjectName }}:{{ .Tag }}-arm64v7

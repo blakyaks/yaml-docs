@@ -1,0 +1,8 @@
+/yaml-docs
+/cmd/yaml-docs/yaml-docs
+dist
+.idea/
+*.iml
+.vscode/
+vendor/
+test_data
