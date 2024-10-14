@@ -113,8 +113,13 @@ func processConfigPaths(configPaths []string, parallelism int) (map[string]confi
 
 		info, err := config.ParseConfigPath(configPath, documentationParsingConfig)
 		if err != nil {
-			log.Warnf("Error parsing information for configuration directory %s, skipping: %s", configPath, err)
-			return
+			if parseError, ok := err.(*config.ConfigParseError); ok {
+				log.Warnf("Configuration parse error at %s: %s", parseError.ConfigPath, parseError.Message)
+				return
+			} else {
+				log.Warnf("Error parsing information for configuration directory %s, skipping: %s", configPath, err)
+				return
+			}
 		}
 		documentationInfoByConfigPathMu.Lock()
 		documentationInfoByConfigPath[info.ConfigPath] = info
@@ -170,11 +175,15 @@ func yamlDocs(_ *cobra.Command, _ []string) {
 		log.Fatal(err)
 	}
 
-	if createMultipleFiles {
-		writeDocumentationMap(info, dryRun, parallelism)
+	if len(info) == 0 {
+		log.Warn("No YAML files were found, documentation will not be created.")
 	} else {
-		combinedInfo := config.CombineDocumentationInfo(info)
-		writeDocumentation(combinedInfo, dryRun)
+		if createMultipleFiles {
+			writeDocumentationMap(info, dryRun, parallelism)
+		} else {
+			combinedInfo := config.CombineDocumentationInfo(info)
+			writeDocumentation(combinedInfo, dryRun)
+		}
 	}
 
 }

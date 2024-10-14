@@ -24,6 +24,15 @@ var sectionRegex = regexp.MustCompile(`^\s*# @section -- (.*)$`)
 var exampleDescriptionRegex = regexp.MustCompile(`^\s*# @exampleDescription -- (.*)$`)
 var exampleRegex = regexp.MustCompile(`^\s*# @example -- (.*)$`)
 
+type ConfigParseError struct {
+	ConfigPath string
+	Message    string
+}
+
+func (e *ConfigParseError) Error() string {
+	return fmt.Sprintf("%s - %s", e.Message, e.ConfigPath)
+}
+
 type ValueDescription struct {
 	Description        string
 	Default            string
@@ -58,6 +67,14 @@ func ParseConfigPath(configDirectory string, documentationParsingConfig Document
 	if err != nil {
 		log.Printf("Error walking through directory: %v", err)
 		return chartDocInfo, err
+	}
+
+	if len(files) == 0 {
+		log.Debugf("No YAML files were found in the path: %s.", configDirectory)
+		return chartDocInfo, &ConfigParseError{
+			ConfigPath: configDirectory,
+			Message:    "No YAML files were found in the path",
+		}
 	}
 
 	// Get values data from configuration files

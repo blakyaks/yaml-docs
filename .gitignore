@@ -5,4 +5,5 @@ dist
 *.iml
 .vscode/
 vendor/
-test_data
+.schema
+SCHEMA.md
