@@ -20,10 +20,13 @@ type valueRow struct {
 	AutoDescription    string
 	Description        string
 	Section            string
-	Example            string
+	ExampleName        string
 	ExampleDescription string
+	Example            string
 	Column             int
 	LineNumber         int
+	Hidden             bool
+	Required           bool
 }
 
 type chartTemplateData struct {
@@ -137,8 +140,12 @@ func getSectionedValueRows(valueRows []valueRow) sections {
 			valueRowsSectionSorted.DefaultSection.SectionItems = append(valueRowsSectionSorted.DefaultSection.SectionItems, row)
 
 			if row.Example != "" {
+				exampleName := row.Key
+				if row.ExampleName != "" {
+					exampleName = row.ExampleName
+				}
 				valueRowsSectionSorted.DefaultSection.Examples = append(valueRowsSectionSorted.DefaultSection.Examples, example{
-					ExampleName: row.Key,
+					ExampleName: exampleName,
 					Description: row.ExampleDescription,
 					CodeBlock:   row.Example,
 				})
@@ -152,14 +159,18 @@ func getSectionedValueRows(valueRows []valueRow) sections {
 			if section.SectionName == row.Section {
 				containsSection = true
 				valueRowsSectionSorted.Sections[i].SectionItems = append(valueRowsSectionSorted.Sections[i].SectionItems, row)
+				if row.Example != "" {
+					exampleName := row.Key
+					if row.ExampleName != "" {
+						exampleName = row.ExampleName
+					}
+					valueRowsSectionSorted.Sections[i].Examples = append(valueRowsSectionSorted.Sections[i].Examples, example{
+						ExampleName: exampleName,
+						Description: row.ExampleDescription,
+						CodeBlock:   row.Example,
+					})
+				}
 				break
-			}
-			if row.Example != "" {
-				valueRowsSectionSorted.Sections[i].Examples = append(valueRowsSectionSorted.Sections[i].Examples, example{
-					ExampleName: row.Key,
-					Description: row.ExampleDescription,
-					CodeBlock:   row.Example,
-				})
 			}
 		}
 
@@ -167,8 +178,12 @@ func getSectionedValueRows(valueRows []valueRow) sections {
 			var examples []example
 			// Only create the examples slice if there is a valid example
 			if row.Example != "" {
+				exampleName := row.Key
+				if row.ExampleName != "" {
+					exampleName = row.ExampleName
+				}
 				examples = []example{{
-					ExampleName: row.Key,
+					ExampleName: exampleName,
 					Description: row.ExampleDescription,
 					CodeBlock:   row.Example,
 				}}
@@ -200,8 +215,6 @@ func getChartTemplateData(info config.DocumentationInfo, yamlDocsVersion string,
 	sortSectionedValueRows(valueRowsSectionSorted)
 
 	documentHeaderFile := viper.GetString("header-file")
-
-	// TODO: Add examples
 
 	return chartTemplateData{
 		DocumentationInfo: info,

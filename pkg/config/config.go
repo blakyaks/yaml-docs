@@ -18,18 +18,18 @@ var valuesDescriptionRegex = regexp.MustCompile(`^\s*#\s*(.*)\s+--\s*(.*)$`)
 var rawDescriptionRegex = regexp.MustCompile(`^\s*#\s+@raw`)
 var commentContinuationRegex = regexp.MustCompile(`^\s*#(\s?)(.*)$`)
 var defaultValueRegex = regexp.MustCompile(`^\s*# @default -- (.*)$`)
-var valueTypeRegex = regexp.MustCompile(`^\((.*?)\)\s*(.*)$`)
+var valueFlagsRegex = regexp.MustCompile(`^(\((\w+)\)\s+)?((?:@\w+\s+)*)?(.*)$`)
 var valueNotationTypeRegex = regexp.MustCompile(`^\s*#\s+@notationType\s+--\s+(.*)$`)
 var sectionRegex = regexp.MustCompile(`^\s*# @section -- (.*)$`)
 var exampleDescriptionRegex = regexp.MustCompile(`^\s*# @exampleDescription -- (.*)$`)
-var exampleRegex = regexp.MustCompile(`^\s*# @example -- (.*)$`)
+var exampleRegex = regexp.MustCompile(`^\s*# @example\s+(.*?)\s*-- (.*)$`)
 
-type ConfigParseError struct {
+type ParseError struct {
 	ConfigPath string
 	Message    string
 }
 
-func (e *ConfigParseError) Error() string {
+func (e *ParseError) Error() string {
 	return fmt.Sprintf("%s - %s", e.Message, e.ConfigPath)
 }
 
@@ -39,8 +39,11 @@ type ValueDescription struct {
 	Section            string
 	ValueType          string
 	NotationType       string
+	ExampleName        string
 	ExampleDescription string
 	Example            string
+	Hidden             bool
+	Required           bool
 }
 
 type DocumentationInfo struct {
@@ -71,7 +74,7 @@ func ParseConfigPath(configDirectory string, documentationParsingConfig Document
 
 	if len(files) == 0 {
 		log.Debugf("No YAML files were found in the path: %s.", configDirectory)
-		return chartDocInfo, &ConfigParseError{
+		return chartDocInfo, &ParseError{
 			ConfigPath: configDirectory,
 			Message:    "No YAML files were found in the path",
 		}
@@ -315,6 +318,7 @@ func parseConfigFileComments(configFile string, values *yaml.Node, lintingConfig
 		commentLines = make([]string, 0)
 		foundValuesComment = false
 	}
+
 	if lintingConfig.StrictMode {
 		err := checkDocumentation(values, keyToDescriptions, lintingConfig)
 		if err != nil {
@@ -381,12 +385,12 @@ func parseValueDescriptions(configFileNames []string, values *yaml.Node, linting
 		valuesNodes[idx] = values
 	}
 
-	mergedValues := mergeValuesDescriptionMaps(valuesNodes...)
+	mergedValues := mergeValueDescriptionMaps(valuesNodes...)
 
 	return mergedValues, nil
 }
 
-func mergeValuesDescriptionMaps(maps ...map[string]ValueDescription) map[string]ValueDescription {
+func mergeValueDescriptionMaps(maps ...map[string]ValueDescription) map[string]ValueDescription {
 
 	// Make a new map to hold the result
 	result := make(map[string]ValueDescription)

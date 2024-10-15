@@ -2,7 +2,7 @@ package document
 
 import (
 	"os"
-	"path"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -119,8 +119,8 @@ func TestGetFiles(t *testing.T) {
 
 	testFiles := getTestFiles()
 	for filePath, entry := range testFiles.foundFiles {
-		fullPath := path.Join(chartDir, filePath)
-		baseDir := path.Dir(fullPath)
+		fullPath := filepath.Join(chartDir, filePath)
+		baseDir := filepath.Dir(fullPath)
 		if err = os.MkdirAll(baseDir, 0o755); err != nil {
 			t.Fatal(err)
 		}

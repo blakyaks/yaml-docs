@@ -38,10 +38,14 @@ func ParseComment(commentLines []string) (string, ValueDescription) {
 		break
 	}
 
-	valueTypeMatch := valueTypeRegex.FindStringSubmatch(c.Description)
-	if len(valueTypeMatch) > 0 && valueTypeMatch[1] != "" {
-		c.ValueType = valueTypeMatch[1]
-		c.Description = valueTypeMatch[2]
+	flagTypeMatch := valueFlagsRegex.FindStringSubmatch(c.Description)
+	if len(flagTypeMatch) > 0 {
+		if flagTypeMatch[2] != "" {
+			c.ValueType = flagTypeMatch[2]
+		}
+		c.Hidden = strings.Contains(flagTypeMatch[3], "@hidden")
+		c.Required = strings.Contains(flagTypeMatch[3], "@required")
+		c.Description = flagTypeMatch[4]
 	}
 
 	var isRaw = false
@@ -83,7 +87,8 @@ func ParseComment(commentLines []string) (string, ValueDescription) {
 		}
 
 		if len(exampleCommentMatch) > 1 {
-			c.Example = exampleCommentMatch[1]
+			c.Example = exampleCommentMatch[2]
+			c.ExampleName = exampleCommentMatch[1]
 			isExample = true
 			continue
 		}
@@ -114,5 +119,6 @@ func ParseComment(commentLines []string) (string, ValueDescription) {
 			continue
 		}
 	}
+
 	return valueKey, c
 }

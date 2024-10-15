@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"path"
 	"path/filepath"
 	"reflect"
 	"regexp"
@@ -102,7 +101,7 @@ func processConfigPaths(configPaths []string, parallelism int) (map[string]confi
 	parallelProcessIterable(configPaths, parallelism, func(elem interface{}) {
 		configPath := elem.(string)
 
-		if !path.IsAbs(configPath) {
+		if !filepath.IsAbs(configPath) {
 			cwd, err := os.Getwd()
 			if err != nil {
 				log.Warnf("Error getting working directory: %v", err)
@@ -113,7 +112,7 @@ func processConfigPaths(configPaths []string, parallelism int) (map[string]confi
 
 		info, err := config.ParseConfigPath(configPath, documentationParsingConfig)
 		if err != nil {
-			if parseError, ok := err.(*config.ConfigParseError); ok {
+			if parseError, ok := err.(*config.ParseError); ok {
 				log.Warnf("Configuration parse error at %s: %s", parseError.ConfigPath, parseError.Message)
 				return
 			} else {

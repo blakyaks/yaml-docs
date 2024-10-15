@@ -3,7 +3,6 @@ package document
 import (
 	"encoding/base64"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 
@@ -109,7 +108,7 @@ func (f files) AsConfig() string {
 
 	// Explicitly convert to strings, and file names
 	for k, v := range f.foundFiles {
-		m[path.Base(k)] = string(v.GetData())
+		m[filepath.Base(k)] = string(v.GetData())
 	}
 
 	return toYAML(m)
@@ -123,7 +122,7 @@ func (f files) AsSecrets() string {
 	m := make(map[string]string)
 
 	for k, v := range f.foundFiles {
-		m[path.Base(k)] = base64.StdEncoding.EncodeToString(v.GetData())
+		m[filepath.Base(k)] = base64.StdEncoding.EncodeToString(v.GetData())
 	}
 
 	return toYAML(m)

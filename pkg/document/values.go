@@ -186,6 +186,15 @@ func createValueRow(
 		defaultValue = fmt.Sprintf("%s", value)
 	}
 
+	var hidden, required bool
+	if autoDescription.Description != "" {
+		hidden = autoDescription.Hidden
+		required = autoDescription.Required
+	} else {
+		hidden = description.Hidden
+		required = description.Required
+	}
+
 	section := description.Section
 	if section == "" && autoDescription.Section != "" {
 		section = autoDescription.Section
@@ -201,6 +210,11 @@ func createValueRow(
 		example = autoDescription.Example
 	}
 
+	exampleName := description.ExampleName
+	if exampleName == "" && autoDescription.ExampleName != "" {
+		exampleName = autoDescription.ExampleName
+	}
+
 	return valueRow{
 		Key:                key,
 		Type:               defaultType,
@@ -210,10 +224,13 @@ func createValueRow(
 		AutoDescription:    autoDescription.Description,
 		Description:        description.Description,
 		Section:            section,
+		ExampleName:        exampleName,
 		ExampleDescription: exampleDescription,
 		Example:            example,
 		Column:             column,
 		LineNumber:         lineNumber,
+		Hidden:             hidden,
+		Required:           required,
 	}, nil
 }
 

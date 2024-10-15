@@ -2,7 +2,6 @@ package util
 
 import (
 	"os"
-	"path"
 	"path/filepath"
 )
 
@@ -15,7 +14,7 @@ func IsBaseFilename(filePath string) bool {
 }
 
 func GetAbsolutePath(filePath string) string {
-	if !path.IsAbs(filePath) {
+	if !filepath.IsAbs(filePath) {
 		cwd, _ := os.Getwd()
 		return filepath.Join(cwd, filePath)
 	} else {
