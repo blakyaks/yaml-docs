@@ -98,17 +98,49 @@ func parseNilValueType(key string, description config.ValueDescription, autoDesc
 		section = autoDescription.Section
 	}
 
+	exampleDescription := description.ExampleDescription
+	if exampleDescription == "" && autoDescription.ExampleDescription != "" {
+		exampleDescription = autoDescription.ExampleDescription
+	}
+
+	example := description.Example
+	if example == "" && autoDescription.Example != "" {
+		example = autoDescription.Example
+	}
+
+	exampleName := description.ExampleName
+	if exampleName == "" && autoDescription.ExampleName != "" {
+		exampleName = autoDescription.ExampleName
+	}
+
+	var hidden, required, deprecated bool
+	if autoDescription.Description != "" {
+		hidden = autoDescription.Hidden
+		required = autoDescription.Required
+		deprecated = autoDescription.Deprecated
+	} else {
+		hidden = description.Hidden
+		required = description.Required
+		deprecated = description.Deprecated
+	}
+
 	return valueRow{
-		Key:             key,
-		Type:            t,
-		NotationType:    autoDescription.NotationType,
-		AutoDefault:     autoDescription.Default,
-		Default:         description.Default,
-		AutoDescription: autoDescription.Description,
-		Description:     description.Description,
-		Section:         section,
-		Column:          column,
-		LineNumber:      lineNumber,
+		Key:                key,
+		Type:               t,
+		NotationType:       autoDescription.NotationType,
+		AutoDefault:        autoDescription.Default,
+		Default:            description.Default,
+		AutoDescription:    autoDescription.Description,
+		Description:        description.Description,
+		Section:            section,
+		Column:             column,
+		LineNumber:         lineNumber,
+		ExampleName:        exampleName,
+		ExampleDescription: exampleDescription,
+		Example:            example,
+		Hidden:             hidden,
+		Required:           required,
+		Deprecated:         deprecated,
 	}
 }
 
@@ -186,13 +218,15 @@ func createValueRow(
 		defaultValue = fmt.Sprintf("%s", value)
 	}
 
-	var hidden, required bool
+	var hidden, required, deprecated bool
 	if autoDescription.Description != "" {
 		hidden = autoDescription.Hidden
 		required = autoDescription.Required
+		deprecated = autoDescription.Deprecated
 	} else {
 		hidden = description.Hidden
 		required = description.Required
+		deprecated = description.Deprecated
 	}
 
 	section := description.Section
@@ -231,6 +265,7 @@ func createValueRow(
 		LineNumber:         lineNumber,
 		Hidden:             hidden,
 		Required:           required,
+		Deprecated:         deprecated,
 	}, nil
 }
 

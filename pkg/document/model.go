@@ -27,6 +27,7 @@ type valueRow struct {
 	LineNumber         int
 	Hidden             bool
 	Required           bool
+	Deprecated         bool
 }
 
 type chartTemplateData struct {

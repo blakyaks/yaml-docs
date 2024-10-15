@@ -45,6 +45,7 @@ func ParseComment(commentLines []string) (string, ValueDescription) {
 		}
 		c.Hidden = strings.Contains(flagTypeMatch[3], "@hidden")
 		c.Required = strings.Contains(flagTypeMatch[3], "@required")
+		c.Deprecated = strings.Contains(flagTypeMatch[3], "@deprecated")
 		c.Description = flagTypeMatch[4]
 	}
 

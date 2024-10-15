@@ -11,8 +11,6 @@
 
 0.0.1
 - 2024-10-14 Release v0.0.1
-- 2024-10-14 Release v0.0.1
-- 2024-10-14 Release v0.0.1
 - 2024-10-14 Remove ignore file from source
 - 2024-10-14 Update README.md
 - 2024-10-14 Added actions
