@@ -1,4 +1,8 @@
 
+0.0.3
+- 2024-10-15 Release v0.0.3
+- 2024-10-15 fix: Template updates and file validation
+
 0.0.2
 - 2024-10-14 Release v0.0.2
 - 2024-10-14 Fixes an issue where empty YAML directories would cause panic
