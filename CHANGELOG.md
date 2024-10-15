@@ -1,8 +1,7 @@
 
 0.0.3
 - 2024-10-15 Release v0.0.3
-
-0.0.3
+- 2024-10-15 fix: Update regex to support complex user types
 - 2024-10-15 Release v0.0.3
 - 2024-10-15 fix: Template updates and file validation
 
