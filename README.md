@@ -9,13 +9,18 @@ repository due to divergence in parts of the codebase.
 
 ## About
 
-yaml-docs is a tool that auto-generates documentation based on comments in YAML configuration files.
+<p align="left" sytle="float: left;">
+  <img alt="yaml-docs" width="25%" src="./docs/yaml-docs.png" style="float: left;"/>
+</p>
+
+**`yaml-docs`** is a tool that auto-generates documentation based on comments in YAML configuration files.
 
 The markdown generation is entirely [gotemplate](https://golang.org/pkg/text/template) driven. The tool parses metadata
 from YAML files and generates a number of sub-templates that can be referenced in a template file (by default `README.md.gotmpl`).
 If no template file is provided, the tool has a default internal template that will generate a reasonably formatted README.
 
 The most useful aspect of this tool is the auto-detection of field descriptions from comments:
+
 ```yaml
 config:
   databasesToCreate:
