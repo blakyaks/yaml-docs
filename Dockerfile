@@ -1,4 +1,4 @@
-FROM alpine:3.20
+FROM scratch
 
 COPY yaml-docs /usr/bin/
 
