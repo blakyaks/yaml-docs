@@ -1,4 +1,8 @@
 
+0.0.5
+- 2024-10-17 Release v0.0.5
+- 2024-10-17 PADO-97 - Enable sections to flow to document children (#2)
+
 0.0.4
 - 2024-10-15 Release v0.0.4
 - 2024-10-15 fix: Example parse updates
