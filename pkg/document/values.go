@@ -7,8 +7,12 @@ import (
 	"strings"
 
 	"github.com/blakyaks/yaml-docs/pkg/config"
+	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
+
+// Used to track the section for AutoSection assignments
+var lastKnownSection string
 
 const (
 	boolType   = "bool"
@@ -48,7 +52,7 @@ func formatNextObjectKeyPrefix(prefix string, key string) string {
 	if prefix != "" {
 		nextPrefix = fmt.Sprintf("%s.%s", prefix, escapedKey)
 	} else {
-		nextPrefix = fmt.Sprintf("%s", escapedKey)
+		nextPrefix = escapedKey
 	}
 
 	return nextPrefix
@@ -98,6 +102,11 @@ func parseNilValueType(key string, description config.ValueDescription, autoDesc
 		section = autoDescription.Section
 	}
 
+	if section != "" {
+		log.Tracef("Key '%s' Updated the lastKnownSection to: %s", key, section)
+		lastKnownSection = section
+	}
+
 	exampleDescription := description.ExampleDescription
 	if exampleDescription == "" && autoDescription.ExampleDescription != "" {
 		exampleDescription = autoDescription.ExampleDescription
@@ -124,6 +133,8 @@ func parseNilValueType(key string, description config.ValueDescription, autoDesc
 		deprecated = description.Deprecated
 	}
 
+	log.Tracef("Processed key '%s': AutoSection: '%s'", key, lastKnownSection)
+
 	return valueRow{
 		Key:                key,
 		Type:               t,
@@ -133,6 +144,7 @@ func parseNilValueType(key string, description config.ValueDescription, autoDesc
 		AutoDescription:    autoDescription.Description,
 		Description:        description.Description,
 		Section:            section,
+		AutoSection:        lastKnownSection,
 		Column:             column,
 		LineNumber:         lineNumber,
 		ExampleName:        exampleName,
@@ -145,6 +157,12 @@ func parseNilValueType(key string, description config.ValueDescription, autoDesc
 }
 
 func jsonMarshalNoEscape(key string, value interface{}) (string, error) {
+
+	// Bypass JSON encoder for strings (removes quotes)
+	if s, ok := value.(string); ok {
+		return s, nil
+	}
+
 	outputBuffer := &bytes.Buffer{}
 	valueEncoder := json.NewEncoder(outputBuffer)
 	valueEncoder.SetEscapeHTML(false)
@@ -234,6 +252,11 @@ func createValueRow(
 		section = autoDescription.Section
 	}
 
+	if section != "" {
+		log.Tracef("Key '%s' Updated the lastKnownSection to: %s", key, section)
+		lastKnownSection = section
+	}
+
 	exampleDescription := description.ExampleDescription
 	if exampleDescription == "" && autoDescription.ExampleDescription != "" {
 		exampleDescription = autoDescription.ExampleDescription
@@ -249,6 +272,8 @@ func createValueRow(
 		exampleName = autoDescription.ExampleName
 	}
 
+	log.Tracef("Processed key '%s': AutoSection: '%s'", key, lastKnownSection)
+
 	return valueRow{
 		Key:                key,
 		Type:               defaultType,
@@ -258,6 +283,7 @@ func createValueRow(
 		AutoDescription:    autoDescription.Description,
 		Description:        description.Description,
 		Section:            section,
+		AutoSection:        lastKnownSection,
 		ExampleName:        exampleName,
 		ExampleDescription: exampleDescription,
 		Example:            example,
@@ -299,7 +325,7 @@ func createValueRowsFromList(
 	// We have a nonempty list with a description, document it, and mark that leaf nodes underneath it should not be
 	// documented without descriptions
 	if hasDescription || (autoDescription.Description != "" && autoDescription.NotationType == "") {
-		jsonableObject := convertHelmValuesToJsonable(values)
+		jsonableObject := convertConfigValuesToJsonable(values)
 		listRow, err := createValueRow(prefix, jsonableObject, description, autoDescription, key.Column, key.Line)
 
 		if err != nil {
@@ -380,6 +406,7 @@ func createValueRowsFromObject(
 		}
 
 		documentedRow, err := createValueRow(nextPrefix, make(map[string]interface{}), description, autoDescription, key.Column, key.Line)
+
 		return []valueRow{documentedRow}, err
 	}
 
@@ -388,7 +415,7 @@ func createValueRowsFromObject(
 	// We have a nonempty object with a description, document it, and mark that leaf nodes underneath it should not be
 	// documented without descriptions
 	if hasDescription || (autoDescription.Description != "" && autoDescription.NotationType == "") {
-		jsonableObject := convertHelmValuesToJsonable(values)
+		jsonableObject := convertConfigValuesToJsonable(values)
 		objectRow, err := createValueRow(nextPrefix, jsonableObject, description, autoDescription, key.Column, key.Line)
 
 		if err != nil {
@@ -443,6 +470,11 @@ func createValueRowsFromObject(
 			return nil, err
 		}
 
+		// Section Cascade
+		// if !viper.GetBool("disable-section-inheritance") {
+		// 	updateSectionInheritance(&valueRowsForObjectField, &lastKnownSection)
+		// }
+
 		valueRows = append(valueRows, valueRowsForObjectField...)
 	}
 
@@ -472,8 +504,10 @@ func createValueRowsFromField(
 
 		switch value.Tag {
 		case nullTag:
-			leafValueRow, err := createValueRow(prefix, nil, description, autoDescription, key.Column, key.Line)
-			return []valueRow{leafValueRow}, err
+			if key != nil {
+				leafValueRow, err := createValueRow(prefix, nil, description, autoDescription, key.Column, key.Line)
+				return []valueRow{leafValueRow}, err
+			}
 		case strTag:
 			// extra check to see if the node is a string, but @notationType was declared
 			if autoDescription.NotationType != "" {

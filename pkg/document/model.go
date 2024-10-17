@@ -20,6 +20,7 @@ type valueRow struct {
 	AutoDescription    string
 	Description        string
 	Section            string
+	AutoSection        string
 	ExampleName        string
 	ExampleDescription string
 	Example            string
@@ -201,6 +202,12 @@ func getSectionedValueRows(valueRows []valueRow) sections {
 	return valueRowsSectionSorted
 }
 
+func applyAutoSectionToValueRows(valueRows []valueRow) {
+	for i := range valueRows {
+		valueRows[i].Section = valueRows[i].AutoSection
+	}
+}
+
 func getChartTemplateData(info config.DocumentationInfo, yamlDocsVersion string, skipVersionFooter bool) (chartTemplateData, error) {
 	valuesTableRows, err := getUnsortedValueRows(info.Values, info.ValuesDescriptions)
 	if err != nil {
@@ -209,6 +216,10 @@ func getChartTemplateData(info config.DocumentationInfo, yamlDocsVersion string,
 
 	if viper.GetBool("ignore-non-descriptions") {
 		valuesTableRows = removeRowsWithoutDescription(valuesTableRows)
+	}
+
+	if !viper.GetBool("disable-section-inheritance") {
+		applyAutoSectionToValueRows(valuesTableRows)
 	}
 
 	sortValueRows(valuesTableRows)

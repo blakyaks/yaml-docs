@@ -12,7 +12,7 @@ const (
 
 // The json library can only marshal maps with string keys, and so all of our lists and maps that go into documentation
 // must be converted to have only string keys before marshalling
-func convertHelmValuesToJsonable(values *yaml.Node) interface{} {
+func convertConfigValuesToJsonable(values *yaml.Node) interface{} {
 	switch values.Kind {
 	case yaml.MappingNode:
 		convertedMap := make(map[string]interface{})
@@ -20,7 +20,7 @@ func convertHelmValuesToJsonable(values *yaml.Node) interface{} {
 		for i := 0; i < len(values.Content); i += 2 {
 			k := values.Content[i]
 			v := values.Content[i+1]
-			convertedMap[k.Value] = convertHelmValuesToJsonable(v)
+			convertedMap[k.Value] = convertConfigValuesToJsonable(v)
 		}
 
 		return convertedMap
@@ -28,12 +28,12 @@ func convertHelmValuesToJsonable(values *yaml.Node) interface{} {
 		convertedList := make([]interface{}, 0)
 
 		for _, v := range values.Content {
-			convertedList = append(convertedList, convertHelmValuesToJsonable(v))
+			convertedList = append(convertedList, convertConfigValuesToJsonable(v))
 		}
 
 		return convertedList
 	case yaml.AliasNode:
-		return convertHelmValuesToJsonable(values.Alias)
+		return convertConfigValuesToJsonable(values.Alias)
 	case yaml.ScalarNode:
 		switch values.Tag {
 		case nullTag:
