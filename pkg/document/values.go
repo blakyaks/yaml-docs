@@ -470,11 +470,6 @@ func createValueRowsFromObject(
 			return nil, err
 		}
 
-		// Section Cascade
-		// if !viper.GetBool("disable-section-inheritance") {
-		// 	updateSectionInheritance(&valueRowsForObjectField, &lastKnownSection)
-		// }
-
 		valueRows = append(valueRows, valueRowsForObjectField...)
 	}
 
