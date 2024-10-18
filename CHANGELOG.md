@@ -1,4 +1,8 @@
 
+0.0.7
+- 2024-10-18 Release v0.0.7
+- 2024-10-18 Enabled support for @raw example and section descriptions
+
 0.0.6
 - 2024-10-18 Release v0.0.6
 - 2024-10-18 Added sectionDescription option and default section override
