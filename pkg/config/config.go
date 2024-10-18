@@ -21,8 +21,8 @@ var defaultValueRegex = regexp.MustCompile(`^\s*# @default -- (.*)$`)
 var valueFlagsRegex = regexp.MustCompile(`^(\(([^)]+)\)\s+)?((?:@\w+\s+)*)?(.*)$`)
 var valueNotationTypeRegex = regexp.MustCompile(`^\s*#\s+@notationType\s+--\s+(.*)$`)
 var sectionRegex = regexp.MustCompile(`^\s*# @section -- (.*)$`)
-var sectionDescriptionRegex = regexp.MustCompile(`^\s*# @sectionDescription -- (.*)$`)
-var exampleDescriptionRegex = regexp.MustCompile(`^\s*# @exampleDescription -- (.*)$`)
+var sectionDescriptionRegex = regexp.MustCompile(`^\s*# @sectionDescription(?:\s+(@raw))?\s*-- (.*)$`)
+var exampleDescriptionRegex = regexp.MustCompile(`^\s*# @exampleDescription(?:\s+(@raw))?\s*-- (.*)$`)
 var exampleRegex = regexp.MustCompile(`^\s*# @example\s+(.*?)\s*-- (.*)$`)
 
 type ParseError struct {

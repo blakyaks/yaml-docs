@@ -53,6 +53,8 @@ func ParseComment(commentLines []string) (string, ValueDescription) {
 	var isExample = false
 	var isExampleDescription = false
 	var isSectionDescription = false
+	var isRawExampleDescription = false
+	var isRawSectionDescription = false
 
 	for _, line := range commentLines[docStartIdx+1:] {
 		rawFlagMatch := rawDescriptionRegex.FindStringSubmatch(line)
@@ -79,7 +81,10 @@ func ParseComment(commentLines []string) (string, ValueDescription) {
 		}
 
 		if len(sectionDescriptionCommentMatch) > 1 {
-			c.SectionDescription = sectionDescriptionCommentMatch[1]
+			if sectionDescriptionCommentMatch[1] == "@raw" {
+				isRawSectionDescription = true
+			}
+			c.SectionDescription = sectionDescriptionCommentMatch[2]
 			isSectionDescription = true
 			continue
 		}
@@ -90,7 +95,10 @@ func ParseComment(commentLines []string) (string, ValueDescription) {
 		}
 
 		if len(exampleDescriptionCommentMatch) > 1 {
-			c.ExampleDescription = exampleDescriptionCommentMatch[1]
+			if exampleDescriptionCommentMatch[1] == "@raw" {
+				isRawExampleDescription = true
+			}
+			c.ExampleDescription = exampleDescriptionCommentMatch[2]
 			isExampleDescription = true
 			continue
 		}
@@ -110,12 +118,20 @@ func ParseComment(commentLines []string) (string, ValueDescription) {
 		}
 
 		if isExampleDescription && len(commentContinuationMatch) > 1 {
-			c.ExampleDescription += " " + commentContinuationMatch[2]
+			if isRawExampleDescription {
+				c.ExampleDescription += "\n" + commentContinuationMatch[2]
+			} else {
+				c.ExampleDescription += " " + commentContinuationMatch[2]
+			}
 			continue
 		}
 
 		if isSectionDescription && len(commentContinuationMatch) > 1 {
-			c.SectionDescription += " " + commentContinuationMatch[2]
+			if isRawSectionDescription {
+				c.SectionDescription += "\n" + commentContinuationMatch[2]
+			} else {
+				c.SectionDescription += " " + commentContinuationMatch[2]
+			}
 			continue
 		}
 
@@ -131,6 +147,8 @@ func ParseComment(commentLines []string) (string, ValueDescription) {
 			isExample = false // Reset flags when not processing a continuation type
 			isExampleDescription = false
 			isSectionDescription = false
+			isRawSectionDescription = false
+			isRawExampleDescription = false
 			continue
 		}
 	}
