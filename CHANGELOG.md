@@ -1,4 +1,8 @@
 
+0.0.6
+- 2024-10-18 Release v0.0.6
+- 2024-10-18 Added sectionDescription option and default section override
+
 0.0.5
 - 2024-10-17 Release v0.0.5
 - 2024-10-17 PADO-97 - Enable sections to flow to document children (#2)
