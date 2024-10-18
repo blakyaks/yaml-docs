@@ -21,6 +21,7 @@ var defaultValueRegex = regexp.MustCompile(`^\s*# @default -- (.*)$`)
 var valueFlagsRegex = regexp.MustCompile(`^(\(([^)]+)\)\s+)?((?:@\w+\s+)*)?(.*)$`)
 var valueNotationTypeRegex = regexp.MustCompile(`^\s*#\s+@notationType\s+--\s+(.*)$`)
 var sectionRegex = regexp.MustCompile(`^\s*# @section -- (.*)$`)
+var sectionDescriptionRegex = regexp.MustCompile(`^\s*# @sectionDescription -- (.*)$`)
 var exampleDescriptionRegex = regexp.MustCompile(`^\s*# @exampleDescription -- (.*)$`)
 var exampleRegex = regexp.MustCompile(`^\s*# @example\s+(.*?)\s*-- (.*)$`)
 
@@ -37,6 +38,7 @@ type ValueDescription struct {
 	Description        string
 	Default            string
 	Section            string
+	SectionDescription string
 	ValueType          string
 	NotationType       string
 	ExampleName        string
@@ -299,12 +301,13 @@ func parseConfigFileComments(configFile string, values *yaml.Node, lintingConfig
 		// NOTE: This isn't readily enforced yet, because we can match the section comment and custom default value more than once and in another order, although this is just overwriting it.
 		// Values comment, possible continuation, default value once or none then section comment once or none should be the preferred order.
 		defaultCommentMatch := defaultValueRegex.FindStringSubmatch(currentLine)
+		sectionDescriptionCommentMatch := sectionDescriptionRegex.FindStringSubmatch(currentLine)
 		sectionCommentMatch := sectionRegex.FindStringSubmatch(currentLine)
 		exampleDescriptionCommentMatch := exampleRegex.FindStringSubmatch(currentLine)
 		exampleCommentMatch := exampleRegex.FindStringSubmatch(currentLine)
 		commentContinuationMatch := commentContinuationRegex.FindStringSubmatch(currentLine)
 
-		if len(exampleDescriptionCommentMatch) > 1 || len(exampleCommentMatch) > 1 || len(defaultCommentMatch) > 1 || len(sectionCommentMatch) > 1 || len(commentContinuationMatch) > 1 {
+		if len(sectionDescriptionCommentMatch) > 1 || len(exampleDescriptionCommentMatch) > 1 || len(exampleCommentMatch) > 1 || len(defaultCommentMatch) > 1 || len(sectionCommentMatch) > 1 || len(commentContinuationMatch) > 1 {
 			commentLines = append(commentLines, currentLine)
 			continue
 		}

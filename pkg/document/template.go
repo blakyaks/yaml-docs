@@ -141,6 +141,7 @@ func getValuesTableTemplates() string {
 	valuesSectionBuilder.WriteString("\n")
 	valuesSectionBuilder.WriteString("\n### {{ .SectionName }}\n")
 	valuesSectionBuilder.WriteString("\n")
+	valuesSectionBuilder.WriteString("{{ if .Description }}{{ .Description }}\n\n{{ end }}")
 	valuesSectionBuilder.WriteString("{{ if .Examples }}")
 	valuesSectionBuilder.WriteString("#### Examples\n\n")
 	valuesSectionBuilder.WriteString("{{ range .Examples }}")

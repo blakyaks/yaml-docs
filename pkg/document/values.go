@@ -103,8 +103,18 @@ func parseNilValueType(key string, description config.ValueDescription, autoDesc
 	}
 
 	if section != "" {
-		log.Tracef("Key '%s' Updated the lastKnownSection to: %s", key, section)
-		lastKnownSection = section
+		if section == "@default" {
+			log.Tracef("Key '%s' reset the lastKnownSection to: default", key)
+			lastKnownSection = ""
+		} else {
+			log.Tracef("Key '%s' updated the lastKnownSection to: %s", key, section)
+			lastKnownSection = section
+		}
+	}
+
+	sectionDescription := description.SectionDescription
+	if sectionDescription == "" && autoDescription.SectionDescription != "" {
+		sectionDescription = autoDescription.SectionDescription
 	}
 
 	exampleDescription := description.ExampleDescription
@@ -144,6 +154,7 @@ func parseNilValueType(key string, description config.ValueDescription, autoDesc
 		AutoDescription:    autoDescription.Description,
 		Description:        description.Description,
 		Section:            section,
+		SectionDescription: sectionDescription,
 		AutoSection:        lastKnownSection,
 		Column:             column,
 		LineNumber:         lineNumber,
@@ -253,8 +264,18 @@ func createValueRow(
 	}
 
 	if section != "" {
-		log.Tracef("Key '%s' Updated the lastKnownSection to: %s", key, section)
-		lastKnownSection = section
+		if section == "@default" {
+			log.Tracef("Key '%s' reset the lastKnownSection to: default", key)
+			lastKnownSection = ""
+		} else {
+			log.Tracef("Key '%s' updated the lastKnownSection to: %s", key, section)
+			lastKnownSection = section
+		}
+	}
+
+	sectionDescription := description.SectionDescription
+	if sectionDescription == "" && autoDescription.SectionDescription != "" {
+		sectionDescription = autoDescription.SectionDescription
 	}
 
 	exampleDescription := description.ExampleDescription
@@ -283,6 +304,7 @@ func createValueRow(
 		AutoDescription:    autoDescription.Description,
 		Description:        description.Description,
 		Section:            section,
+		SectionDescription: sectionDescription,
 		AutoSection:        lastKnownSection,
 		ExampleName:        exampleName,
 		ExampleDescription: exampleDescription,

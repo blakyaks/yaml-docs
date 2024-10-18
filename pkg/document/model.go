@@ -20,6 +20,7 @@ type valueRow struct {
 	AutoDescription    string
 	Description        string
 	Section            string
+	SectionDescription string
 	AutoSection        string
 	ExampleName        string
 	ExampleDescription string
@@ -48,6 +49,7 @@ type sections struct {
 
 type section struct {
 	SectionName  string
+	Description  string
 	SectionItems []valueRow
 	Examples     []example
 }
@@ -133,6 +135,7 @@ func getSectionedValueRows(valueRows []valueRow) sections {
 	var valueRowsSectionSorted sections
 	valueRowsSectionSorted.DefaultSection = section{
 		SectionName:  "Other Values",
+		Description:  "",
 		SectionItems: []valueRow{},
 		Examples:     []example{},
 	}
@@ -193,6 +196,7 @@ func getSectionedValueRows(valueRows []valueRow) sections {
 			// Append a new section regardless of whether examples exist
 			valueRowsSectionSorted.Sections = append(valueRowsSectionSorted.Sections, section{
 				SectionName:  row.Section,
+				Description:  row.SectionDescription,
 				SectionItems: []valueRow{row},
 				Examples:     examples,
 			})

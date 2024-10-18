@@ -52,11 +52,13 @@ func ParseComment(commentLines []string) (string, ValueDescription) {
 	var isRaw = false
 	var isExample = false
 	var isExampleDescription = false
+	var isSectionDescription = false
 
 	for _, line := range commentLines[docStartIdx+1:] {
 		rawFlagMatch := rawDescriptionRegex.FindStringSubmatch(line)
 		defaultCommentMatch := defaultValueRegex.FindStringSubmatch(line)
 		notationTypeCommentMatch := valueNotationTypeRegex.FindStringSubmatch(line)
+		sectionDescriptionCommentMatch := sectionDescriptionRegex.FindStringSubmatch(line)
 		sectionCommentMatch := sectionRegex.FindStringSubmatch(line)
 		exampleDescriptionCommentMatch := exampleDescriptionRegex.FindStringSubmatch(line)
 		exampleCommentMatch := exampleRegex.FindStringSubmatch(line)
@@ -73,6 +75,12 @@ func ParseComment(commentLines []string) (string, ValueDescription) {
 
 		if len(notationTypeCommentMatch) > 1 {
 			c.NotationType = notationTypeCommentMatch[1]
+			continue
+		}
+
+		if len(sectionDescriptionCommentMatch) > 1 {
+			c.SectionDescription = sectionDescriptionCommentMatch[1]
+			isSectionDescription = true
 			continue
 		}
 
@@ -97,12 +105,17 @@ func ParseComment(commentLines []string) (string, ValueDescription) {
 		commentContinuationMatch := commentContinuationRegex.FindStringSubmatch(line)
 
 		if isExample && len(commentContinuationMatch) > 1 {
-			c.Example += "\n" + commentContinuationMatch[2] // Add to the example instead of the description
+			c.Example += "\n" + commentContinuationMatch[2]
 			continue
 		}
 
 		if isExampleDescription && len(commentContinuationMatch) > 1 {
-			c.ExampleDescription += " " + commentContinuationMatch[2] // Add to the exampleDescription instead of the description
+			c.ExampleDescription += " " + commentContinuationMatch[2]
+			continue
+		}
+
+		if isSectionDescription && len(commentContinuationMatch) > 1 {
+			c.SectionDescription += " " + commentContinuationMatch[2]
 			continue
 		}
 
@@ -115,8 +128,9 @@ func ParseComment(commentLines []string) (string, ValueDescription) {
 			if len(commentContinuationMatch) > 1 {
 				c.Description += " " + commentContinuationMatch[2]
 			}
-			isExample = false // Reset flags when not processing an example type
+			isExample = false // Reset flags when not processing a continuation type
 			isExampleDescription = false
+			isSectionDescription = false
 			continue
 		}
 	}
