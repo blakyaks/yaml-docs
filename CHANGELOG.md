@@ -1,4 +1,8 @@
 
+0.0.8
+- 2024-10-22 Release v0.0.8
+- 2024-10-22 Adds support for @experimental tag
+
 0.0.7
 - 2024-10-18 Release v0.0.7
 - 2024-10-18 Enabled support for @raw example and section descriptions
