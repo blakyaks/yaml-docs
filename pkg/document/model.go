@@ -30,6 +30,7 @@ type valueRow struct {
 	Hidden             bool
 	Required           bool
 	Deprecated         bool
+	Experimental       bool
 }
 
 type chartTemplateData struct {

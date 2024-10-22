@@ -47,6 +47,7 @@ type ValueDescription struct {
 	Hidden             bool
 	Required           bool
 	Deprecated         bool
+	Experimental       bool
 }
 
 type DocumentationInfo struct {

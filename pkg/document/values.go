@@ -132,15 +132,17 @@ func parseNilValueType(key string, description config.ValueDescription, autoDesc
 		exampleName = autoDescription.ExampleName
 	}
 
-	var hidden, required, deprecated bool
+	var hidden, required, deprecated, experimental bool
 	if autoDescription.Description != "" {
 		hidden = autoDescription.Hidden
 		required = autoDescription.Required
 		deprecated = autoDescription.Deprecated
+		experimental = autoDescription.Experimental
 	} else {
 		hidden = description.Hidden
 		required = description.Required
 		deprecated = description.Deprecated
+		experimental = description.Experimental
 	}
 
 	log.Tracef("Processed key '%s': AutoSection: '%s'", key, lastKnownSection)
@@ -164,6 +166,7 @@ func parseNilValueType(key string, description config.ValueDescription, autoDesc
 		Hidden:             hidden,
 		Required:           required,
 		Deprecated:         deprecated,
+		Experimental:       experimental,
 	}
 }
 
@@ -247,15 +250,17 @@ func createValueRow(
 		defaultValue = fmt.Sprintf("%s", value)
 	}
 
-	var hidden, required, deprecated bool
+	var hidden, required, deprecated, experimental bool
 	if autoDescription.Description != "" {
 		hidden = autoDescription.Hidden
 		required = autoDescription.Required
 		deprecated = autoDescription.Deprecated
+		experimental = autoDescription.Experimental
 	} else {
 		hidden = description.Hidden
 		required = description.Required
 		deprecated = description.Deprecated
+		experimental = description.Experimental
 	}
 
 	section := description.Section
@@ -314,6 +319,7 @@ func createValueRow(
 		Hidden:             hidden,
 		Required:           required,
 		Deprecated:         deprecated,
+		Experimental:       experimental,
 	}, nil
 }
 
