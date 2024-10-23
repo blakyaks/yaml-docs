@@ -7,6 +7,7 @@ import (
 	"text/template"
 
 	"github.com/blakyaks/yaml-docs/pkg/util"
+	"github.com/spf13/viper"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -144,7 +145,10 @@ func getSectionToc() string {
 	s.WriteString("{{ if .Sections.DefaultSection.SectionItems }}")
 	s.WriteString("- {{ .Sections.DefaultSection.SectionName | toMarkdownLink }}")
 	s.WriteString("{{- end }}")
-	s.WriteString("\n-----------------\n")
+	s.WriteString("\n-----------------\n\n")
+	if !viper.GetBool("no-section-page-breaks") {
+		s.WriteString("<div style=\"page-break-after: always;\"></div>")
+	}
 	s.WriteString(`{{ end }}`)
 	return s.String()
 }
