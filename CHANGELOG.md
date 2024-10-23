@@ -1,4 +1,8 @@
 
+0.0.9
+- 2024-10-23 Release v0.0.9
+- 2024-10-23 Added ToC function and tidied templates
+
 0.0.8
 - 2024-10-22 Release v0.0.8
 - 2024-10-22 Adds support for @experimental tag
