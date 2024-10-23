@@ -1,4 +1,8 @@
 
+0.0.12
+- 2024-10-23 Release v0.0.12
+- 2024-10-23 Added section page breaks option
+
 0.0.11
 - 2024-10-23 Release v0.0.11
 
