@@ -1,4 +1,8 @@
 
+0.0.13
+- 2024-10-23 Release v0.0.13
+- 2024-10-23 Add page break for contents when using section breaks
+
 0.0.12
 - 2024-10-23 Release v0.0.12
 - 2024-10-23 Added section page breaks option
