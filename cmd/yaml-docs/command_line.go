@@ -62,6 +62,7 @@ func newYamlDocsCommand(run func(cmd *cobra.Command, args []string)) (*cobra.Com
 	command.PersistentFlags().Bool("ignore-non-descriptions", false, "ignore values without a comment, these values will not be included in the README")
 	command.PersistentFlags().Bool("multiple-output-files", false, "if set each config-file will render its own README template using the output-file-prefix format")
 	command.PersistentFlags().Bool("skip-version-footer", false, "if set, the yaml-docs version footer will not be shown in the default README template")
+	command.PersistentFlags().Bool("skip-toc", false, "if set, a table of contents will not be created in the default README template")
 	command.PersistentFlags().Bool("disable-section-inheritance", false, "if set, sections will not be inherited during document processing")
 	command.PersistentFlags().BoolP("documentation-strict-mode", "x", false, "Fail the generation of docs if there are undocumented values")
 	command.PersistentFlags().BoolP("dry-run", "d", false, "don't actually render any markdown files just print to stdout passed")

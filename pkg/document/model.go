@@ -41,6 +41,7 @@ type chartTemplateData struct {
 	Files             files
 	SkipVersionFooter bool
 	DocumentHeader    string
+	CreateToc         bool
 }
 
 type sections struct {
@@ -232,6 +233,7 @@ func getChartTemplateData(info config.DocumentationInfo, yamlDocsVersion string,
 	sortSectionedValueRows(valueRowsSectionSorted)
 
 	documentHeaderFile := viper.GetString("header-file")
+	createToc := !viper.GetBool("skip-toc")
 
 	return chartTemplateData{
 		DocumentationInfo: info,
@@ -240,6 +242,7 @@ func getChartTemplateData(info config.DocumentationInfo, yamlDocsVersion string,
 		Sections:          valueRowsSectionSorted,
 		SkipVersionFooter: skipVersionFooter,
 		DocumentHeader:    documentHeaderFile,
+		CreateToc:         createToc,
 	}, nil
 }
 

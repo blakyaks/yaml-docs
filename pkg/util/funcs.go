@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -18,6 +19,7 @@ func FuncMap() template.FuncMap {
 	f["include"] = includeFileContent
 	f["trimLead"] = trimLeadingSpace
 	f["toYamlCodeBlock"] = toYamlCodeBlock
+	f["toMarkdownLink"] = toMarkdownLink
 	return f
 }
 
@@ -72,7 +74,8 @@ func includeFileContent(filename string) string {
 		return ""
 	}
 
-	return strings.TrimSuffix(string(content), "\n")
+	return strings.TrimSuffix(string(content), "\n") + "\n\n-----------------\n\n"
+
 }
 
 // Returns the string with any leading whitespace removed
@@ -85,4 +88,11 @@ func trimLeadingSpace(str string) string {
 // Can be used from templates using the format {{ .Property | toYamlCodeBlock }}
 func toYamlCodeBlock(str string) string {
 	return "```yaml\n" + str + "\n```"
+}
+
+// Returns a markdown table of contents based on the sections
+// Use from templates using {{ .Section | toMarkdownLink }}
+func toMarkdownLink(str string) string {
+	anchor := strings.ToLower(strings.ReplaceAll(str, " ", "-"))
+	return fmt.Sprintf("[%s](#%s)\n", str, anchor)
 }
