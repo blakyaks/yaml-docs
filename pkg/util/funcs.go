@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"text/template"
 	"unicode"
@@ -93,6 +94,18 @@ func toYamlCodeBlock(str string) string {
 // Returns a markdown table of contents based on the sections
 // Use from templates using {{ .Section | toMarkdownLink }}
 func toMarkdownLink(str string) string {
-	anchor := strings.ToLower(strings.ReplaceAll(strings.ReplaceAll(str, " ", "-"), ".", ""))
-	return fmt.Sprintf("[%s](#%s)\n", str, anchor)
+	anchor := createAnchor(str)
+	return fmt.Sprintf("[%s](%s)\n", str, anchor)
+}
+
+// createAnchor converts a markdown title to a URL-friendly anchor.
+func createAnchor(str string) string {
+	str = strings.ToLower(str)
+	str = strings.ReplaceAll(str, "  ", "¬¬")
+	reg := regexp.MustCompile("[^a-zA-Z0-9 ¬-]")
+	str = reg.ReplaceAllString(str, "")
+	str = strings.ReplaceAll(str, " ", "-")
+	str = strings.ReplaceAll(str, "¬¬", "--")
+	str = strings.Trim(str, "-")
+	return "#" + str
 }

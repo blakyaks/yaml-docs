@@ -1,4 +1,7 @@
 
+0.0.11
+- 2024-10-23 Release v0.0.11
+
 0.0.10
 - 2024-10-23 Release v0.0.10
 - 2024-10-23 fix: Enable use of numbers in ToC headers
