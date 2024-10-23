@@ -1,4 +1,8 @@
 
+0.0.14
+- 2024-10-23 Release v0.0.14
+- 2024-10-23 Remove contents hr if using breaks
+
 0.0.13
 - 2024-10-23 Release v0.0.13
 - 2024-10-23 Add page break for contents when using section breaks
