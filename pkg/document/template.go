@@ -145,9 +145,12 @@ func getSectionToc() string {
 	s.WriteString("{{ if .Sections.DefaultSection.SectionItems }}")
 	s.WriteString("- {{ .Sections.DefaultSection.SectionName | toMarkdownLink }}")
 	s.WriteString("{{- end }}")
-	s.WriteString("\n-----------------\n\n")
 	if !viper.GetBool("no-section-page-breaks") {
+		s.WriteString("\n")
 		s.WriteString("<div style=\"page-break-after: always;\"></div>")
+		s.WriteString("\n\n")
+	} else {
+		s.WriteString("\n-----------------\n\n")
 	}
 	s.WriteString(`{{ end }}`)
 	return s.String()
