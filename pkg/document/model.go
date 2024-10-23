@@ -54,6 +54,7 @@ type section struct {
 	Description  string
 	SectionItems []valueRow
 	Examples     []example
+	SectionBreak bool
 }
 
 type example struct {
@@ -135,11 +136,14 @@ func getUnsortedValueRows(document *yaml.Node, descriptions map[string]config.Va
 
 func getSectionedValueRows(valueRows []valueRow) sections {
 	var valueRowsSectionSorted sections
+	sectionBreak := !viper.GetBool("no-section-page-breaks")
+
 	valueRowsSectionSorted.DefaultSection = section{
 		SectionName:  "Other Values",
 		Description:  "",
 		SectionItems: []valueRow{},
 		Examples:     []example{},
+		SectionBreak: sectionBreak,
 	}
 
 	for _, row := range valueRows {
@@ -201,6 +205,7 @@ func getSectionedValueRows(valueRows []valueRow) sections {
 				Description:  row.SectionDescription,
 				SectionItems: []valueRow{row},
 				Examples:     examples,
+				SectionBreak: sectionBreak,
 			})
 		}
 	}

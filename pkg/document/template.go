@@ -12,15 +12,11 @@ import (
 )
 
 const defaultDocumentationTemplate = `{{ include .DocumentHeader }}
-
 {{- if .CreateToc }}
 {{ template "config.sectionToc" . }}
 {{- end }}
-
 {{ template "config.examplesSection" . }}
-
 {{ template "config.valuesSection" . }}
-
 {{- if not .SkipVersionFooter }}
 {{ template "yaml-docs.versionFooter" . }}
 {{- end }}
@@ -144,11 +140,11 @@ func getSectionToc() string {
 	s.WriteString("\n## Contents\n\n")
 	s.WriteString("{{ range .Sections.Sections }}")
 	s.WriteString("- {{ .SectionName | toMarkdownLink }}")
-	s.WriteString("{{ end }}\n")
+	s.WriteString("{{ end }}")
 	s.WriteString("{{ if .Sections.DefaultSection.SectionItems }}")
 	s.WriteString("- {{ .Sections.DefaultSection.SectionName | toMarkdownLink }}")
 	s.WriteString("{{- end }}")
-	s.WriteString("-----------------\n")
+	s.WriteString("\n-----------------\n")
 	s.WriteString(`{{ end }}`)
 	return s.String()
 }
@@ -179,6 +175,7 @@ func getValuesTableTemplates() string {
 	s.WriteString("\n| {{ if .Experimental }}<span style='cursor: help;' title='Experimental'>✨</span>{{ end }}{{ if .Deprecated }}<span style='cursor: help;' title='Deprecated'>⚠️</span>{{ end }} {{ .Key }} | {{ .Type }} | {{ if .Required }}**{{ .Required }}**{{ else }}{{ .Required }}{{ end }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |")
 	s.WriteString("  {{- end }}")
 	s.WriteString("  {{- end }}")
+	s.WriteString("{{ if .SectionBreak }}\n\n<div style=\"page-break-after: always;\"></div>{{ end }}")
 	s.WriteString("{{- end }}")
 
 	// Default section
@@ -212,7 +209,7 @@ func getValuesTableTemplates() string {
 	s.WriteString("\n\n")
 	s.WriteString(`{{ template "config.valuesTable" . }}`)
 	s.WriteString("{{ end }}")
-	s.WriteString("{{ end }}")
+	s.WriteString("{{- end }}")
 
 	// For HTML tables
 	s.WriteString(`
