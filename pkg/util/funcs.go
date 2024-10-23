@@ -93,6 +93,6 @@ func toYamlCodeBlock(str string) string {
 // Returns a markdown table of contents based on the sections
 // Use from templates using {{ .Section | toMarkdownLink }}
 func toMarkdownLink(str string) string {
-	anchor := strings.ToLower(strings.ReplaceAll(str, " ", "-"))
+	anchor := strings.ToLower(strings.ReplaceAll(strings.ReplaceAll(str, " ", "-"), ".", ""))
 	return fmt.Sprintf("[%s](#%s)\n", str, anchor)
 }
