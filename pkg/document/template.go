@@ -138,6 +138,13 @@ func getYamlDocsVersionTemplates() string {
 func getSectionToc() string {
 	s := strings.Builder{}
 	s.WriteString(`{{ define "config.sectionToc" }}`)
+	if viper.GetBool("no-section-page-breaks") {
+		s.WriteString("\n-----------------\n\n")
+	} else {
+		s.WriteString("\n")
+		s.WriteString("<div style=\"page-break-after: always;\"></div>")
+		s.WriteString("\n\n")
+	}
 	s.WriteString("\n## Contents\n\n")
 	s.WriteString("{{ range .Sections.Sections }}")
 	s.WriteString("- {{ .SectionName | toMarkdownLink }}")
@@ -145,12 +152,12 @@ func getSectionToc() string {
 	s.WriteString("{{ if .Sections.DefaultSection.SectionItems }}")
 	s.WriteString("- {{ .Sections.DefaultSection.SectionName | toMarkdownLink }}")
 	s.WriteString("{{- end }}")
-	if !viper.GetBool("no-section-page-breaks") {
+	if viper.GetBool("no-section-page-breaks") {
+		s.WriteString("\n-----------------\n\n")
+	} else {
 		s.WriteString("\n")
 		s.WriteString("<div style=\"page-break-after: always;\"></div>")
 		s.WriteString("\n\n")
-	} else {
-		s.WriteString("\n-----------------\n\n")
 	}
 	s.WriteString(`{{ end }}`)
 	return s.String()

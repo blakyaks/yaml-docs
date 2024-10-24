@@ -75,7 +75,7 @@ func includeFileContent(filename string) string {
 		return ""
 	}
 
-	return strings.TrimSuffix(string(content), "\n") + "\n\n-----------------\n\n"
+	return strings.TrimSuffix(string(content), "\n") + "\n\n"
 
 }
 
