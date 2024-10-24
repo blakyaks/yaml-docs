@@ -1,6 +1,9 @@
 package document
 
 import (
+	"regexp"
+	"strconv"
+
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
@@ -71,4 +74,29 @@ func convertConfigValuesToJsonable(values *yaml.Node) interface{} {
 	}
 
 	return nil
+}
+
+// naturalLess compares two strings in a natural order.
+func naturalLess(a, b string) bool {
+	// Regular expression to extract numbers
+	re := regexp.MustCompile(`(\d+)`)
+	aIndexes := re.FindAllStringIndex(a, -1)
+	bIndexes := re.FindAllStringIndex(b, -1)
+
+	// Iterate over the slices of indexes and compare numerical values
+	for i, aIndex := range aIndexes {
+		if i >= len(bIndexes) {
+			return false // b is shorter in number parts, a comes after b
+		}
+		bIndex := bIndexes[i]
+		// Convert the substrings that are numbers to integers
+		numA, _ := strconv.Atoi(a[aIndex[0]:aIndex[1]])
+		numB, _ := strconv.Atoi(b[bIndex[0]:bIndex[1]])
+		if numA != numB {
+			return numA < numB // Compare as integers
+		}
+	}
+
+	// If all numbers compared are equal, fall back to lexicographical order
+	return a < b
 }

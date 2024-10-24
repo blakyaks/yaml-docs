@@ -12,25 +12,26 @@ import (
 )
 
 type valueRow struct {
-	Key                string
-	Type               string
-	NotationType       string
-	AutoDefault        string
-	Default            string
-	AutoDescription    string
-	Description        string
-	Section            string
-	SectionDescription string
-	AutoSection        string
-	ExampleName        string
-	ExampleDescription string
-	Example            string
-	Column             int
-	LineNumber         int
-	Hidden             bool
-	Required           bool
-	Deprecated         bool
-	Experimental       bool
+	Key                    string
+	Type                   string
+	NotationType           string
+	AutoDefault            string
+	Default                string
+	AutoDescription        string
+	Description            string
+	Section                string
+	SectionDescription     string
+	AutoSection            string
+	AutoSectionDescription string
+	ExampleName            string
+	ExampleDescription     string
+	Example                string
+	Column                 int
+	LineNumber             int
+	Hidden                 bool
+	Required               bool
+	Deprecated             bool
+	Experimental           bool
 }
 
 type chartTemplateData struct {
@@ -216,7 +217,14 @@ func getSectionedValueRows(valueRows []valueRow) sections {
 func applyAutoSectionToValueRows(valueRows []valueRow) {
 	for i := range valueRows {
 		valueRows[i].Section = valueRows[i].AutoSection
+		valueRows[i].SectionDescription = valueRows[i].AutoSectionDescription
 	}
+}
+
+func getSortedSections(s *sections) {
+	sort.Slice(s.Sections, func(i, j int) bool {
+		return naturalLess(s.Sections[i].SectionName, s.Sections[j].SectionName)
+	})
 }
 
 func getChartTemplateData(info config.DocumentationInfo, yamlDocsVersion string, skipVersionFooter bool) (chartTemplateData, error) {
@@ -236,6 +244,9 @@ func getChartTemplateData(info config.DocumentationInfo, yamlDocsVersion string,
 	sortValueRows(valuesTableRows)
 	valueRowsSectionSorted := getSectionedValueRows(valuesTableRows)
 	sortSectionedValueRows(valueRowsSectionSorted)
+
+	// Sort the sections
+	getSortedSections(&valueRowsSectionSorted)
 
 	documentHeaderFile := viper.GetString("header-file")
 	createToc := !viper.GetBool("skip-toc")

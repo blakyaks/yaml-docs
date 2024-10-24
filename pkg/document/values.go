@@ -12,7 +12,7 @@ import (
 )
 
 // Used to track the section for AutoSection assignments
-var lastKnownSection string
+var lastKnownSection, lastKnownSectionDescription string
 
 const (
 	boolType   = "bool"
@@ -102,19 +102,21 @@ func parseNilValueType(key string, description config.ValueDescription, autoDesc
 		section = autoDescription.Section
 	}
 
+	sectionDescription := description.SectionDescription
+	if sectionDescription == "" && autoDescription.SectionDescription != "" {
+		sectionDescription = autoDescription.SectionDescription
+	}
+
 	if section != "" {
 		if section == "@default" {
 			log.Tracef("Key '%s' reset the lastKnownSection to: default", key)
 			lastKnownSection = ""
+			lastKnownSectionDescription = ""
 		} else {
 			log.Tracef("Key '%s' updated the lastKnownSection to: %s", key, section)
 			lastKnownSection = section
+			lastKnownSectionDescription = sectionDescription
 		}
-	}
-
-	sectionDescription := description.SectionDescription
-	if sectionDescription == "" && autoDescription.SectionDescription != "" {
-		sectionDescription = autoDescription.SectionDescription
 	}
 
 	exampleDescription := description.ExampleDescription
@@ -148,25 +150,26 @@ func parseNilValueType(key string, description config.ValueDescription, autoDesc
 	log.Tracef("Processed key '%s': AutoSection: '%s'", key, lastKnownSection)
 
 	return valueRow{
-		Key:                key,
-		Type:               t,
-		NotationType:       autoDescription.NotationType,
-		AutoDefault:        autoDescription.Default,
-		Default:            description.Default,
-		AutoDescription:    autoDescription.Description,
-		Description:        description.Description,
-		Section:            section,
-		SectionDescription: sectionDescription,
-		AutoSection:        lastKnownSection,
-		Column:             column,
-		LineNumber:         lineNumber,
-		ExampleName:        exampleName,
-		ExampleDescription: exampleDescription,
-		Example:            example,
-		Hidden:             hidden,
-		Required:           required,
-		Deprecated:         deprecated,
-		Experimental:       experimental,
+		Key:                    key,
+		Type:                   t,
+		NotationType:           autoDescription.NotationType,
+		AutoDefault:            autoDescription.Default,
+		Default:                description.Default,
+		AutoDescription:        autoDescription.Description,
+		Description:            description.Description,
+		Section:                section,
+		SectionDescription:     sectionDescription,
+		AutoSection:            lastKnownSection,
+		AutoSectionDescription: lastKnownSectionDescription,
+		Column:                 column,
+		LineNumber:             lineNumber,
+		ExampleName:            exampleName,
+		ExampleDescription:     exampleDescription,
+		Example:                example,
+		Hidden:                 hidden,
+		Required:               required,
+		Deprecated:             deprecated,
+		Experimental:           experimental,
 	}
 }
 
@@ -268,19 +271,21 @@ func createValueRow(
 		section = autoDescription.Section
 	}
 
+	sectionDescription := description.SectionDescription
+	if sectionDescription == "" && autoDescription.SectionDescription != "" {
+		sectionDescription = autoDescription.SectionDescription
+	}
+
 	if section != "" {
 		if section == "@default" {
 			log.Tracef("Key '%s' reset the lastKnownSection to: default", key)
 			lastKnownSection = ""
+			lastKnownSectionDescription = ""
 		} else {
 			log.Tracef("Key '%s' updated the lastKnownSection to: %s", key, section)
 			lastKnownSection = section
+			lastKnownSectionDescription = sectionDescription
 		}
-	}
-
-	sectionDescription := description.SectionDescription
-	if sectionDescription == "" && autoDescription.SectionDescription != "" {
-		sectionDescription = autoDescription.SectionDescription
 	}
 
 	exampleDescription := description.ExampleDescription
@@ -301,25 +306,26 @@ func createValueRow(
 	log.Tracef("Processed key '%s': AutoSection: '%s'", key, lastKnownSection)
 
 	return valueRow{
-		Key:                key,
-		Type:               defaultType,
-		NotationType:       notationType,
-		AutoDefault:        autoDescription.Default,
-		Default:            defaultValue,
-		AutoDescription:    autoDescription.Description,
-		Description:        description.Description,
-		Section:            section,
-		SectionDescription: sectionDescription,
-		AutoSection:        lastKnownSection,
-		ExampleName:        exampleName,
-		ExampleDescription: exampleDescription,
-		Example:            example,
-		Column:             column,
-		LineNumber:         lineNumber,
-		Hidden:             hidden,
-		Required:           required,
-		Deprecated:         deprecated,
-		Experimental:       experimental,
+		Key:                    key,
+		Type:                   defaultType,
+		NotationType:           notationType,
+		AutoDefault:            autoDescription.Default,
+		Default:                defaultValue,
+		AutoDescription:        autoDescription.Description,
+		Description:            description.Description,
+		Section:                section,
+		SectionDescription:     sectionDescription,
+		AutoSection:            lastKnownSection,
+		AutoSectionDescription: lastKnownSectionDescription,
+		ExampleName:            exampleName,
+		ExampleDescription:     exampleDescription,
+		Example:                example,
+		Column:                 column,
+		LineNumber:             lineNumber,
+		Hidden:                 hidden,
+		Required:               required,
+		Deprecated:             deprecated,
+		Experimental:           experimental,
 	}, nil
 }
 
