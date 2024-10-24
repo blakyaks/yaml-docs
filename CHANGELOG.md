@@ -1,4 +1,8 @@
 
+0.0.16
+- 2024-10-24 Release v0.0.16
+- 2024-10-24 fix: Added additional breaks to content page
+
 0.0.15
 - 2024-10-24 Release v0.0.15
 - 2024-10-24 fix: Implement natural sorted sections and description cascade
