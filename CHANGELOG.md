@@ -1,4 +1,8 @@
 
+0.0.15
+- 2024-10-24 Release v0.0.15
+- 2024-10-24 fix: Implement natural sorted sections and description cascade
+
 0.0.14
 - 2024-10-23 Release v0.0.14
 - 2024-10-23 Remove contents hr if using breaks
