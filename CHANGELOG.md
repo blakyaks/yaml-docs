@@ -1,4 +1,15 @@
 
+0.0.17
+- 2025-01-03 Release v0.0.17
+- 2025-01-03 fix: Update values table headers for default section
+- 2025-01-03 Bump helm.sh/helm/v3 from 3.16.2 to 3.16.4 (#11)
+- 2025-01-03 Bump docker/setup-buildx-action from 3.7.1 to 3.8.0 (#10)
+- 2025-01-03 Bump actions/setup-go from 5.0.2 to 5.2.0 (#9)
+- 2025-01-03 Bump github.com/stretchr/testify from 1.9.0 to 1.10.0 (#8)
+- 2025-01-03 Bump goreleaser/goreleaser-action from 6.0.0 to 6.1.0 (#6)
+- 2025-01-03 Bump actions/checkout from 4.2.1 to 4.2.2 (#5)
+- 2025-01-03 Bump crazy-max/ghaction-import-gpg from 6.1.0 to 6.2.0 (#4)
+
 0.0.16
 - 2024-10-24 Release v0.0.16
 - 2024-10-24 fix: Added additional breaks to content page
